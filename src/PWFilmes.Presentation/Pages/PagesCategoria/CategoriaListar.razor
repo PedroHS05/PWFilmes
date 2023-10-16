@@ -1,0 +1,45 @@
+﻿@page "/categoria/listar"
+@inject HttpClient Http
+
+@using System.Text.Json
+@using PWFilmes.Domain
+
+<h3>Categorias</h3>
+
+<RadzenDataGrid 
+    AllowFiltering="true" 
+    AllowColumnResize="true" 
+    AllowAlternatingRows="true" 
+    FilterMode="FilterMode.Advanced" 
+    AllowSorting="true" 
+    PageSize="5" 
+    AllowPaging="true" 
+    PagerHorizontalAlign="HorizontalAlign.Left" 
+    ShowPagingSummary="true"
+    Data="@categorias" 
+    TItem="Categoria"
+    ColumnWidth="300px" 
+    LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Categoria" Property="Codigo" Title="Código" Width="100px" />
+        <RadzenDataGridColumn TItem="Categoria" Property="Descricao" Title="Descrição" />
+        <RadzenDataGridColumn TItem="Categoria" Property="Cor" Title="Cor" Width="80px" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    List<Categoria> categorias = new List<Categoria>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responde = await Http.GetAsync("api/Categoria/listar");
+
+        var content = await responde.Content.ReadAsStringAsync();// Informções em formato de string
+
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        categorias = JsonSerializer.Deserialize<List<Categoria>>(content, options);
+
+    }
+
+}
