@@ -38,5 +38,20 @@ namespace PWFilmes.API.Controllers
 
             return Created("Created", $"Categoria {categoria.Codigo} Adicionada com sucesso");
         }
+
+        [HttpPut("Atualizar")]
+        public IActionResult Atualizar(Categoria categoria)
+        {
+            if (_context.CategoriaSet.Any(p => p.Codigo == categoria.Codigo))
+            {
+                _context.Attach(categoria);
+                _context.CategoriaSet.Update(categoria);
+                _context.SaveChanges();
+
+                return Ok($"Categoria {categoria.Codigo} Atualizada com sucesso");
+            }
+
+            return BadRequest($"Categoria {categoria.Codigo} não localizado");
+        }
     }
 }
