@@ -53,5 +53,18 @@ namespace PWFilmes.API.Controllers
 
             return BadRequest($"Categoria {categoria.Codigo} não localizado");
         }
+        
+        [HttpDelete("Excluir")]
+        public IActionResult Excluir (int codigo)
+        {
+            var categoria = _context.CategoriaSet.Find(codigo);
+            if(categoria == null)// verifica se a categoria é nula            
+                return BadRequest($"Categoria {codigo} não localizada");//se ela for nula ela rotorna um código 404/BadRequest que informa que a categoria é nula
+
+            _context.CategoriaSet.Remove(categoria);
+            _context.SaveChanges();
+
+            return Ok($"Categoria {codigo} removida com Sucesso.");
+        }
     }
 }
