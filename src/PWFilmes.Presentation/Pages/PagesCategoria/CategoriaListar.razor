@@ -1,10 +1,13 @@
 ﻿@page "/categoria/listar"
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 @using System.Text.Json
 @using PWFilmes.Domain
 
 <h3>Categorias</h3>
+
+<RadzenButton Icon="add" ButtonStyle="ButtonStyle.Primary" Text="Nova Categoria" Click="NovaCategoria"/>
 
 <RadzenDataGrid 
     AllowFiltering="true" 
@@ -42,4 +45,8 @@
 
     }
 
+    public void NovaCategoria()
+    {
+        NavigationManager.NavigateTo("categoria-nova");
+    }
 }
