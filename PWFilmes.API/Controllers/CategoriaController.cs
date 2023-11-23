@@ -54,7 +54,7 @@ namespace PWFilmes.API.Controllers
             return BadRequest($"Categoria {categoria.Codigo} não localizado");
         }
         
-        [HttpDelete("Excluir")]
+        [HttpDelete("excluir/{codigo}")]
         public IActionResult Excluir (int codigo)
         {
             var categoria = _context.CategoriaSet.Find(codigo);

@@ -46,7 +46,7 @@
                 <RadzenStack Orientation="Orientation.Horizontal"
                              JustifyContent="JustifyContent.Center">
                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Primary"
-                                  class="rz-border-radius-10" />
+                                  class="rz-border-radius-10" Click="EditarCategoria"/>
                     <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger"
                                   class="rz-border-radius-10" 
                                   Click="() => RemoverCategoria(data.Codigo)"/>
@@ -76,6 +76,11 @@
         NavigationManager.NavigateTo("categoria-nova");
     }
 
+    public void EditarCategoria()
+    {
+        NavigationManager.NavigateTo("categoria-editar");
+    }
+
     public async Task RemoverCategoria(int codigoCategoria)
     {
         var retorno = await DialogService.Confirm($"Deseja excluir a categoria de código { codigoCategoria }", "PWFilmes", new ConfirmOptions()
@@ -86,7 +91,10 @@
 
         if (retorno is true)
         {
-            await Http.DeleteAsync($"api/Categoria/excluir/{codigoCategoria}");
+            var response = await Http.DeleteAsync($"api/Categoria/excluir/{codigoCategoria}");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                await OnInitializedAsync();
+
         }
     }
 }
