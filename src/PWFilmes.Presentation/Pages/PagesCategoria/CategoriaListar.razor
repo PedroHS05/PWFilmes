@@ -10,7 +10,7 @@
 
 <RadzenDialog/>
 
-<RadzenButton Icon="add" ButtonStyle="ButtonStyle.Primary" Text="Nova Categoria" Click="NovaCategoria" class="rz-mb-4 rz-border-radius-10"  />
+<RadzenButton Icon="add" ButtonStyle="ButtonStyle.Primary" Text="Nova Categoria" Click="NovaCategoria" class="rz-mb-4 rz-border-radius-10" />
 
 <RadzenDataGrid 
     AllowFiltering="true" 
@@ -20,7 +20,7 @@
     AllowSorting="true" 
     PageSize="5" 
     AllowPaging="true" 
-    PagerHorizontalAlign="HorizontalAlign.Left"  
+    PagerHorizontalAlign="HorizontalAlign.Left" 
     ShowPagingSummary="true"
     Data="@categorias" 
     TItem="Categoria"
@@ -31,9 +31,10 @@
         <RadzenDataGridColumn TItem="Categoria" Property="Descricao" Title="Descrição" />
         <RadzenDataGridColumn TItem="Categoria" Property="Cor" Title="Cor" Width="80px">
             <Template Context="data">
-                <RadzenColorPicker @bind-Value=@data.Cor Style="width: 100%" Disabled/>
+                <RadzenColorPicker @bind-Value=@data.Cor Style="width: 100%" Disabled />
             </Template>
         </RadzenDataGridColumn>
+
 
         <RadzenDataGridColumn
                               TItem="Categoria"
@@ -43,14 +44,18 @@
                               TextAlign="TextAlign.Center"
                               Width="50px">
             <Template Context="data">
-                <RadzenStack Orientation="Orientation.Horizontal"
-                             JustifyContent="JustifyContent.Center">
-                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Primary"
-                                  class="rz-border-radius-10" Click="EditarCategoria"/>
-                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger"
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                    <RadzenButton 
+                                  Icon="edit"
+                                  ButtonStyle="ButtonStyle.Primary"
+                                  class="rz-border-radius-10" 
+                                  Click="() => EditarCategoria(data.Codigo)"/>
+                    <RadzenButton 
+                                  Icon="delete_forever" 
+                                  ButtonStyle="ButtonStyle.Danger" 
                                   class="rz-border-radius-10" 
                                   Click="() => RemoverCategoria(data.Codigo)"/>
-                </RadzenStack>                
+                </RadzenStack>
             </Template>
         </RadzenDataGridColumn>
     </Columns>
@@ -68,7 +73,6 @@
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         categorias = JsonSerializer.Deserialize<List<Categoria>>(content, options);
-
     }
 
     public void NovaCategoria()
@@ -76,14 +80,9 @@
         NavigationManager.NavigateTo("categoria-nova");
     }
 
-    public void EditarCategoria()
-    {
-        NavigationManager.NavigateTo("categoria-editar");
-    }
-
     public async Task RemoverCategoria(int codigoCategoria)
     {
-        var retorno = await DialogService.Confirm($"Deseja excluir a categoria de código { codigoCategoria }", "PWFilmes", new ConfirmOptions()
+        var retorno = await DialogService.Confirm($"Deseja excluir a categoria de código { codigoCategoria}", "PWFIlmes", new ConfirmOptions()
         {
             OkButtonText = "Sim",
             CancelButtonText = "Não"
@@ -92,9 +91,14 @@
         if (retorno is true)
         {
             var response = await Http.DeleteAsync($"api/Categoria/excluir/{codigoCategoria}");
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                await OnInitializedAsync();
 
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)//Se o código de resposta for 200, atualize a página
+                await OnInitializedAsync();
         }
+    }
+
+    public void EditarCategoria(int codigoCategoria)
+    {
+        NavigationManager.NavigateTo($"categoria-editar/{codigoCategoria}");
     }
 }
