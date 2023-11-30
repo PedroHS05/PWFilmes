@@ -2,12 +2,14 @@
 
 @using PWFilmes.Domain;
 @using System.Text.Json; 
+@using System.Net;
 
 @inject HttpClient Http;
+@inject NavigationManager NavigationManager;
 
 <h3>Editar Categoria</h3>
 
-<EditForm Model="categoriaModel">
+<EditForm Model="categoriaModel" OnValidSubmit="Confirmar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -40,7 +42,8 @@
         <RadzenButton Icon="delete_forever"
                       ButtonStyle="ButtonStyle.Danger"
                       Text="Cancelar"
-                      class="rz-border-radius-10" />
+                      class="rz-border-radius-10" 
+                      Click="Cancelar"/>
         <RadzenButton Icon="done"
                       ButtonStyle="ButtonStyle.Success"
                       Text="Confirmar"
@@ -49,7 +52,6 @@
     </RadzenStack>
 </EditForm>
 
-@codigoCategoria
 
 @code {
     [Parameter]
@@ -64,5 +66,20 @@
         categoriaModel = JsonSerializer.Deserialize<Categoria>(content, options);
 
         await base.OnInitializedAsync();
+    }
+
+    public async void Confirmar()
+    {
+        var categoriaJson = JsonContent.Create(categoriaModel);
+        var response = await Http.PutAsync("api/Categoria/atualizar", categoriaJson);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            NavigationManager.NavigateTo("categoria/listar");
+        }
+    }
+
+    public void Cancelar()
+    {
+        NavigationManager.NavigateTo("categoria/listar");
     }
 }
